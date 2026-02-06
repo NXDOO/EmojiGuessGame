@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>新春 Emoji 猜灯谜</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+        <div id="bg-animation"></div>
+        <button id="btn-debug" style="position:fixed; top:10px; right:10px; z-index:100; opacity:0; pointer-events: none;">🐛</button>
+        
+        <div id="start-screen" class="screen active">
+            <h1 class="title">
+                <div class="title-main">
+                    <div class="char-wrapper">
+                        <div class="char-bg"></div>
+                        <span class="char-text">表</span>
+                    </div>
+                    <div class="char-wrapper">
+                        <div class="char-bg"></div>
+                        <span class="char-text">情</span>
+                    </div>
+                    <div class="char-wrapper">
+                        <div class="char-bg"></div>
+                        <span class="char-text">猜</span>
+                    </div>
+                    <div class="char-wrapper">
+                        <div class="char-bg"></div>
+                        <span class="char-text">猜</span>
+                    </div>
+                </div>
+            </h1>
+            
+            <div class="start-footer">
+                <span class="footer-text">祝你新的一年</span>
+                <div class="slots-container" id="slots-container">
+                    <!-- Slots will be injected here -->
+                </div>
+            </div>
+
+            <div class="current-settings">
+                <div class="setting-summary-card" id="btn-open-settings">
+                    <div class="summary-items-container">
+                        <div class="summary-item">
+                            <span class="label">当前词库</span>
+                            <span class="value" id="current-bank-display">🏮 成语</span>
+                        </div>
+                        <!-- Divider removed -->
+                        <div class="summary-item">
+                            <span class="label">题目数量</span>
+                            <span class="value" id="current-count-display">10 题</span>
+                        </div>
+                    </div>
+                    <div class="click-hint">👆 点击可修改词库</div>
+                </div>
+            </div>
+
+            <button id="btn-start" class="btn-primary btn-block-wide">开始猜谜</button>
+        </div>
+
+        <div id="bank-modal" class="modal hidden">
+            <div class="modal-content bank-modal-content">
+                <div class="modal-header">
+                    <h3>⚙️ 游戏设置</h3>
+                    <button class="btn-close" id="btn-close-modal">✕</button>
+                </div>
+                
+                <div class="setting-section">
+                    <h4>📚 选择词库 (可多选)</h4>
+                    <div class="bank-options full-width">
+                        <label class="bank-option">
+                            <input type="checkbox" name="bank" value="idiom" checked>
+                            <div class="option-card">
+                                🏮 成语
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                        <label class="bank-option">
+                            <input type="checkbox" name="bank" value="food">
+                            <div class="option-card">
+                                🍜 美食
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                        <label class="bank-option">
+                            <input type="checkbox" name="bank" value="movie">
+                            <div class="option-card">
+                                🎬 影视
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                        <label class="bank-option">
+                            <input type="checkbox" name="bank" value="music">
+                            <div class="option-card">
+                                🎵 音乐
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-section">
+                    <h4>📝 题目数量</h4>
+                    <div class="count-options vertical-stack">
+                        <label class="count-option">
+                            <input type="radio" name="count" value="10" checked>
+                            <div class="option-card">
+                                10 题
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                        <label class="count-option">
+                            <input type="radio" name="count" value="20">
+                            <div class="option-card">
+                                20 题
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                        <label class="count-option">
+                            <input type="radio" name="count" value="30">
+                            <div class="option-card">
+                                30 题
+                                <div class="red-marker">✔</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="btn-confirm-bank" class="btn-primary btn-full">确认修改</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="glass-panel">
+                <div class="header">
+                    <!-- Home button removed -->
+                    <div class="header-stats" style="width: 100%; display: flex; justify-content: space-between; gap: 10px;">
+                        <div class="progress-pill">📝 <span id="progress-val">1/10</span></div>
+                        <div class="score-pill">💰 得分: <span id="score-val">0</span></div>
+                    </div>
+                </div>
+                <div class="game-layout">
+                    <div id="quiz-display-area">
+                        <div class="emoji-display" id="emoji-display">❓</div>
+                        
+                        <div id="status-wrapper">
+                            <div id="feedback-container" class="feedback-container" style="display: none; opacity: 0;">
+                                <div class="feedback-row-top">
+                                    <div id="feedback-icon" class="feedback-icon">🥳</div>
+                                    <div id="feedback-text">回答正确</div>
+                                </div>
+                                <div id="feedback-answer">答案：吉星高照</div>
+                                <div id="feedback-desc" style="display:none; font-size: 0.9rem; color: #777; margin-top: 5px;"></div>
+                            </div>
+
+                            <div class="hint-text" id="hint-text">请输入答案</div>
+                        </div>
+                    </div>
+
+                    <div class="input-area" id="input-area">
+                        <input type="text" id="answer-input" placeholder="点击输入答案..." autocomplete="off">
+                        <button id="btn-submit" class="btn-action">提交答案</button>
+                        <button id="btn-next" class="btn-action" style="display: none;">下一题</button>
+                        <button id="btn-skip" class="btn-secondary">跳过本题</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <h2 class="subtitle">🎉 挑战完成！</h2>
+            <div class="final-score">
+                <span class="label">最终得分</span>
+                <span class="value" id="final-score-val">80</span>
+            </div>
+            <p id="result-comment">太厉害了！简直是灯谜之王！🏆</p>
+            <button id="btn-restart" class="btn-primary">再玩一次</button>
+        </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
